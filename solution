@@ -1,0 +1,36 @@
+const getAllPossibleCombinations = (str, pairs) => {
+  const allStringCombination = new Set([]);
+  let newStringCombinations = [str];
+  const isNewStringsGenerated = () => newStringCombinations.some((string) => !allStringCombination.has(string))
+  const saveGeneratedStrings = () => newStringCombinations.forEach((string) => allStringCombination.add(string))
+
+  while(isNewStringsGenerated()) {
+      saveGeneratedStrings();
+      const arrayFromLastString = newStringCombinations[newStringCombinations.length - 1].split('');
+      newStringCombinations = pairs.map(function(pair) {
+          const stringArrayCopy = arrayFromLastString;
+          const temporary = stringArrayCopy[pair[0] - 1];
+          stringArrayCopy[[pair[0] - 1]] = stringArrayCopy[[pair[1] - 1]]
+          stringArrayCopy[[pair[1] - 1]] = temporary;
+          
+          return stringArrayCopy.join('');
+      });
+              console.log(newStringCombinations)
+
+      
+  }
+  
+  return [...allStringCombination];
+}
+
+const solution = (str, pairs) => {
+    const allCombinations = getAllPossibleCombinations(str, pairs);
+    let lexicographicallyLargest = allCombinations[0];
+    allCombinations.forEach((string) => {
+        if (lexicographicallyLargest < string) {
+            lexicographicallyLargest = string;
+        }
+    });
+    
+    return lexicographicallyLargest;
+}
