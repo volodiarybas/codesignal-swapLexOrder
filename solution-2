@@ -1,0 +1,53 @@
+let count = 1;
+const getAllPossibleCombinations = (str, pairs) => {
+    const pairsWithCorrectIndexes = pairs.map(pair => [pair[0] - 1, pair[1] - 1]);
+    const allPossibleCombinations = new Set([str]);
+    
+    for (let index = 0; index < allPossibleCombinations.size; index++) {
+        const arrayOfAllCombinations = Array.from(allPossibleCombinations);
+        pairsWithCorrectIndexes.forEach(pair => {
+          count++;
+          allPossibleCombinations.add(swapChars(arrayOfAllCombinations[index], pair[0], pair[1]));
+        });
+    };
+
+    return Array.from(allPossibleCombinations);
+}
+
+const solution = (str, pairs) => {
+    const allCombinations = getAllPossibleCombinations(str, pairs);
+
+    let lexicographicallyLargest = allCombinations[0];
+    allCombinations.forEach((string) => {
+        if (lexicographicallyLargest < string) {
+            lexicographicallyLargest = string;
+        }
+    });
+ 
+    return lexicographicallyLargest;
+}
+
+const swapChars = (str, indexA, indexB) => {
+    let res = '',index = 0;
+    const a= str[indexA];
+    const b= str[indexB];
+    for (const char of str){
+
+        if(index === indexA){
+        	res =res + b;
+           index++;
+          continue;
+        }
+        if(index === indexB){
+        	res = res + a;
+           index++;
+          continue;
+        }
+      
+       
+        res = res + char;
+         index++;
+    } 
+    
+    return res;
+} 
