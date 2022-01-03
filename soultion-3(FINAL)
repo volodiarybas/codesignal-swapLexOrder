@@ -1,0 +1,96 @@
+//Main Idea: generate groups with chars that can be swaped and put largest chars to as largest as possible position in the given string;So we will get the lexicographically largest string;
+
+//Recursive function which create new exchangeable group for each call, and fill it with indexes of chars which can be swaped;
+const getAllExchangeableGroups = (mergedPairs, exchangeableGroups = []) => {
+    //Case which stops recursion and returns all groups;
+    if (mergedPairs.length === 0) {
+        return exchangeableGroups;
+    };
+    
+    //Push firsts elements to new  exchangeablegroup from pairs array;
+    const group = [mergedPairs[0], mergedPairs[1]];
+    //Remove added pair from pairs array;
+    mergedPairs.splice(0, 2);
+
+    //Loop which go throught exchangeable group elements and adds to this groups new elements which can be swaped        with them
+    for (let index = 0;  index < group.length; index++) {
+        const char = group[index];
+        const exchangeableWithChar = getAllExchangeableWithChar(char, mergedPairs);
+        group.push(...exchangeableWithChar);
+    }
+
+    //Add generated group to list of all groups;
+    exchangeableGroups.push(group);
+    return getAllExchangeableGroups(mergedPairs, exchangeableGroups);
+};
+
+//Function which looks for elements that can be swaped with given char;
+const getAllExchangeableWithChar = (char, pairs) => {
+    const result = [];
+    for (let index = 0; index < pairs.length; index++) {
+        if (char === pairs[index]) {
+            if ( index % 2 === 0) {
+                result.push(pairs[index + 1]);
+                //Remove added pairs from pairs array;
+                pairs.splice(index, 2);
+            } else {
+                result.push(pairs[index - 1]);
+                //Remove added pairs from pairs array;
+                pairs.splice(index - 1, 2);
+            }
+        }
+    }
+    return result;
+}
+
+const solution = (str, pairs) => {
+    //Merge pairs array of arrays and reduce every element with 1 to get correct chars indexes;
+    pairs = [].concat(...pairs).map(index => index - 1);
+    
+    const exchangeableGroups =  getAllExchangeableGroups(pairs);
+       
+    //Put largest chars to as largest as possible position in the given string;
+    exchangeableGroups.forEach(group => {
+        group.sort((a,b) => a - b);
+        while(group.length > 1) {
+            let largestCharIndex = group[0];
+            for (let index = group[0] ; index < str.length; index++) {
+               if (!group.includes(index)) continue;
+               if (str[index] > str[largestCharIndex]) {
+                   largestCharIndex = index;
+               }
+            };
+            str = swapChars(str, group[0], largestCharIndex);
+
+            group.shift();
+        }
+    })
+       
+    return str;
+};
+
+//Helper for  quick swaping chars by indexes;
+const swapChars = (str, indexA, indexB) => {
+    let res = '';
+    let index = 0;
+    const a= str[indexA];
+    const b= str[indexB];
+    
+    for (const char of str){
+        if(index === indexA){
+        	res =res + b;
+           index++;
+          continue;
+        }
+        if(index === indexB){
+        	res = res + a;
+           index++;
+          continue;
+        }
+      
+        res = res + char;
+        index++;
+    } 
+
+    return res;
+} 
