@@ -1,23 +1,27 @@
+//Main idea: pass given string throught array of pairs and swap elements while new strings are generated; After we find the lexicographically largest one from generated strings;
+
 const getAllPossibleCombinations = (str, pairs) => {
+  //Use Set to avoid duplicates;
   const allStringCombination = new Set([]);
   let newStringCombinations = [str];
+  
   const isNewStringsGenerated = () => newStringCombinations.some((string) => !allStringCombination.has(string))
   const saveGeneratedStrings = () => newStringCombinations.forEach((string) => allStringCombination.add(string))
 
+  //Continue to swap chars until the whole cycle is over and received string is the same as given one;
   while(isNewStringsGenerated()) {
       saveGeneratedStrings();
       const arrayFromLastString = newStringCombinations[newStringCombinations.length - 1].split('');
       newStringCombinations = pairs.map(function(pair) {
+          //Substructing 1 to get correct array indexes;
+          pair = [pair[0] - 1, pair[1] - 1]
           const stringArrayCopy = arrayFromLastString;
-          const temporary = stringArrayCopy[pair[0] - 1];
-          stringArrayCopy[[pair[0] - 1]] = stringArrayCopy[[pair[1] - 1]]
-          stringArrayCopy[[pair[1] - 1]] = temporary;
+          const temporary = stringArrayCopy[pair[0]];
+          stringArrayCopy[pair[0]] = stringArrayCopy[pair[1]]
+          stringArrayCopy[pair[1]] = temporary;
           
           return stringArrayCopy.join('');
-      });
-              console.log(newStringCombinations)
-
-      
+      });      
   }
   
   return [...allStringCombination];
@@ -25,6 +29,7 @@ const getAllPossibleCombinations = (str, pairs) => {
 
 const solution = (str, pairs) => {
     const allCombinations = getAllPossibleCombinations(str, pairs);
+    //Find the the lexicographically largest string 
     let lexicographicallyLargest = allCombinations[0];
     allCombinations.forEach((string) => {
         if (lexicographicallyLargest < string) {
