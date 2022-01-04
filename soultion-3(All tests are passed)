@@ -19,6 +19,7 @@ const getAllExchangeableGroups = (mergedPairs, exchangeableGroups = []) => {
         group.push(...exchangeableWithChar);
     }
 
+    group.sort((a,b) => a - b);
     //Add generated group to list of all groups;
     exchangeableGroups.push(group);
     return getAllExchangeableGroups(mergedPairs, exchangeableGroups);
@@ -40,21 +41,22 @@ const getAllExchangeableWithChar = (char, pairs) => {
             }
         }
     }
+
     return result;
 }
 
 const solution = (str, pairs) => {
     //Merge pairs array of arrays and reduce every element with 1 to get correct chars indexes;
-    pairs = [].concat(...pairs).map(index => index - 1);
+    const mergedPairs = [].concat(...pairs).map(index => index - 1);
     
-    const exchangeableGroups =  getAllExchangeableGroups(pairs);
-       
+    const exchangeableGroups =  getAllExchangeableGroups(mergedPairs);
+
     //Put largest chars to as largest as possible position in the given string;
     exchangeableGroups.forEach(group => {
-        group.sort((a,b) => a - b);
         while(group.length > 1) {
             let largestCharIndex = group[0];
             for (let index = group[0] ; index < str.length; index++) {
+               //Skip this iterration, if element can't be swaped with group members
                if (!group.includes(index)) continue;
                if (str[index] > str[largestCharIndex]) {
                    largestCharIndex = index;
@@ -73,8 +75,8 @@ const solution = (str, pairs) => {
 const swapChars = (str, indexA, indexB) => {
     let res = '';
     let index = 0;
-    const a= str[indexA];
-    const b= str[indexB];
+    const a = str[indexA];
+    const b = str[indexB];
     
     for (const char of str){
         if(index === indexA){
